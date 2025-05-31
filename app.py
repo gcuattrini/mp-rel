@@ -33,7 +33,7 @@ def webhook():
 
     return '', 200
 
-# Hacemos que Flask escuche el puerto que Render le asigna
+# ⬇️ Esto es lo más importante para que Render detecte el puerto
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
