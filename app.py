@@ -16,23 +16,24 @@ def webhook():
     if data and data.get('type') == 'payment':
         payment_id = data['data']['id']
 
-        # Verificar el estado del pago desde la API de Mercado Pago
+        # Consultamos el pago a la API de Mercado Pago
         r = requests.get(
             f"https://api.mercadopago.com/v1/payments/{payment_id}",
             headers={"Authorization": f"Bearer {ACCESS_TOKEN}"}
         )
         pago = r.json()
 
+        # Condición de activación: pago aprobado y producto esperado
         if pago.get("status") == "approved" and "producto" in pago.get("description", "").lower():
             print("✅ Pago aprobado, activando relé")
             try:
                 requests.get(RELE_URL_SECRETA)
             except Exception as e:
                 print("⚠️ Error al activar el relé:", e)
-    
+
     return '', 200
 
-# Hacemos que Flask escuche en el puerto asignado por Render
+# Hacemos que Flask escuche el puerto que Render le asigna
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
